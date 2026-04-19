@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>India Population Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --ap: #2dd4a0;
+      --ts: #a89af7;
+      --in: #60aaee;
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #1e2530;
+      --border: #2a3140;
+      --text: #e6edf3;
+      --muted: #8b949e;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      letter-spacing: -0.5px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #0d1117 0%, #131922 60%, #1a2233 100%);
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      padding: 3rem 0 2.5rem;
+    }
+
+    .hero p {
+      color: var(--muted);
+    }
+
+    .nav-pills .nav-link {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted);
+      border-radius: 8px;
+      padding: 6px 18px;
+      border: 1px solid transparent;
+    }
+
+    .nav-pills .nav-link:hover {
+      color: var(--text);
+      background: var(--surface2);
+    }
+
+    .nav-pills .nav-link.active {
+      background: var(--surface2);
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      border: 1px solid var(--border);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .stat-value {
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .table-card {
+      background: var(--surface);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    table {
+      margin: 0;
+    }
+
+    thead th {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border) !important;
+      padding: 10px 16px;
+      color: var(--muted);
+    }
+
+    tbody td {
+      padding: 11px 16px;
+      font-size: 14px;
+      vertical-align: middle;
+      border-color: var(--border);
+      color: var(--text);
+      background: var(--surface);
+    }
+
+    .table-hover tbody tr:hover td {
+      background: var(--surface2) !important;
+    }
+
+    .rank-badge {
+      display: inline-block;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 500;
+      text-align: center;
+      line-height: 26px;
+      background: var(--surface2);
+      color: var(--muted);
+    }
+
+    .rank-badge.top {
+      background: #3d2f00;
+      color: #f5c842;
+    }
+
+    .bar-bg {
+      background: var(--surface2);
+      border-radius: 4px;
+      height: 8px;
+      min-width: 80px;
+    }
+
+    .bar-fill {
+      height: 8px;
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    .bar-ap {
+      background: var(--ap);
+    }
+
+    .bar-ts {
+      background: var(--ts);
+    }
+
+    .bar-in {
+      background: var(--in);
+    }
+
+    .pop-num {
+      font-variant-numeric: tabular-nums;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="root"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const AP_DATA = [
+      [1, "Visakhapatnam", 2100000], [2, "Vijayawada", 1550000], [3, "Guntur", 740000],
+      [4, "Nellore", 660000], [5, "Kurnool", 570000], [6, "Rajahmundry", 480000],
+      [7, "Tirupati", 460000], [8, "Kakinada", 440000], [9, "Anantapur", 380000], [10, "Kadapa", 360000]
+    ];
+
+    const TS_DATA = [
+      [1, "Hyderabad", 12052545], [2, "Warangal", 1241844], [3, "Nizamabad", 498865],
+      [4, "Karimnagar", 493997], [5, "Khammam", 485954]
+    ];
+
+    const INDIA_DATA = [
+      [1, "Mumbai", 20411000], [2, "Delhi", 32941000], [3, "Bangalore", 13855000],
+      [4, "Hyderabad", 11068000], [5, "Ahmedabad", 8059000], [6, "Chennai", 7709000],
+      [7, "Kolkata", 14850000], [8, "Surat", 7500000], [9, "Pune", 7400000], [10, "Jaipur", 4000000]
+    ];
+
+    function fmt(n) {
+      if (n >= 10000000) return (n / 10000000).toFixed(2) + ' Cr';
+      if (n >= 100000) return (n / 100000).toFixed(2) + ' L';
+      return n.toLocaleString('en-IN');
+    }
+
+    function StatCard({ label, value }) {
+      return (
+        <div className="stat-card">
+          <div className="stat-label">{label}</div>
+          <div className="stat-value">{value}</div>
+        </div>
+      );
+    }
+
+    function PopTable({ data, barClass, stats }) {
+      const max = Math.max(...data.map(d => d[2]));
+      return (
+        <div>
+          <div className="row g-3 mb-4">
+            {stats.map((s, i) => <div className="col-6 col-md-4" key={i}><StatCard label={s.label} value={s.value} /></div>)}
+          </div>
+          <div className="table-card">
+            <table className="table table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>City</th>
+                  <th>Population</th>
+                  <th style={{ minWidth: 120 }}>Share of top</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.map(([rank, city, pop]) => {
+                  const pct = Math.round((pop / max) * 100);
+                  return (
+                    <tr key={rank}>
+                      <td><span className={`rank-badge${rank === 1 ? ' top' : ''}`}>{rank}</span></td>
+                      <td style={{ fontWeight: 500 }}>{city}</td>
+                      <td className="pop-num">{fmt(pop)}</td>
+                      <td>
+                        <div className="bar-bg">
+                          <div className={`bar-fill ${barClass}`} style={{ width: pct + '%' }}></div>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      const [tab, setTab] = useState('ap');
+
+      const tabs = [
+        { id: 'ap', label: 'Andhra Pradesh' },
+        { id: 'ts', label: 'Telangana' },
+        { id: 'india', label: 'Major Indian Cities' },
+      ];
+
+      const content = {
+        ap: {
+          data: AP_DATA,
+          barClass: 'bar-ap',
+          stats: [
+            { label: 'Cities Listed', value: '10' },
+            { label: 'Largest City', value: 'Visakhapatnam' },
+            { label: 'Top Population', value: '21.00 L' },
+          ]
+        },
+        ts: {
+          data: TS_DATA,
+          barClass: 'bar-ts',
+          stats: [
+            { label: 'Cities Listed', value: '5' },
+            { label: 'Largest City', value: 'Hyderabad' },
+            { label: 'Top Population', value: '1.21 Cr' },
+          ]
+        },
+        india: {
+          data: INDIA_DATA,
+          barClass: 'bar-in',
+          stats: [
+            { label: 'Cities Listed', value: '10' },
+            { label: 'Largest City', value: 'Delhi' },
+            { label: 'Top Population', value: '3.29 Cr' },
+          ]
+        }
+      };
+
+      const active = content[tab];
+
+      return (
+        <>
+          <div className="hero">
+            <div className="container">
+              <h1 className="mb-1">India Population Dashboard</h1>
+              <p className="mb-4">City-level population estimates across Andhra Pradesh, Telangana &amp; major metros</p>
+              <ul className="nav nav-pills gap-2">
+                {tabs.map(t => (
+                  <li className="nav-item" key={t.id}>
+                    <button
+                      className={`nav-link${tab === t.id ? ' active' : ''}`}
+                      onClick={() => setTab(t.id)}
+                    >{t.label}</button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="container py-4">
+            <PopTable
+              key={tab}
+              data={active.data}
+              barClass={active.barClass}
+              stats={active.stats}
+            />
+          </div>
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+
+</html>
